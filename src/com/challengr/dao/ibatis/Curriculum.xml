@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ <sqlMap namespace="Curriculum">
+ 	<typeAlias alias="Curriculum" type="com.challengr.model.Curriculum"/>
+ 	<resultMap id="curriculumResult" class="Curriculum">
+        <result property="id" column="id"/>
+        <result property="courseCollege" column="course_college"/>
+        <result property="courseCode" column="course_code"/>
+        <result property="courseName" column="course_name"/>
+        <result property="teacherName" column="teacher_name"/>
+        <result property="bookName" column="textbook_name"/>
+        <result property="bookPublisher" column="textbook_publisher"/>
+        <result property="bookAuthor" column="textbook_author"/>
+        <result property="bookEdition" column="textbook_edition"/>
+        <result property="courseUniversity" column="course_university" nullValue="0"/>
+        <result property="textbookId" column="textbook_id" nullValue="0"/>
+        <result property="courseInfo" column="course_info"/>
+        <result property="teacherId" column="teacher_id" nullValue="0"/>
+        <result property="collegeId" column="college_id" nullValue="0"/>
+    </resultMap>
+	
+	<insert id="insertCurriculum" parameterClass="com.challengr.model.Curriculum">
+		INSERT INTO tab_curriculum_scu (
+			id,
+			course_college,
+			course_code,
+			course_name,
+			teacher_name,
+			textbook_name,
+			textbook_publisher,
+			textbook_edition,
+			course_university,
+			textbook_id,
+			course_info,
+			teacher_id,
+			college_id
+		)
+		VALUES
+		(
+			#id#,
+			#courseCollege#,
+    		#courseCode#,
+    		#courseName#,
+    		#teacherName#,
+	    	#bookName#,
+   		 	#bookPublisher#,
+    		#bookEdition#,
+    		#courseUniversity#,
+    		#textbookId#,
+   	  	    #courseInfo#,
+    		#teacherId#,
+    		#collegeId#
+    		<selectKey resultClass="int" keyProperty="id">    
+			SELECT @@IDENTITY AS ID    
+			</selectKey>	
+  		)
+	</insert>
+	
+	<update id="updateCurriculum" parameterClass="com.challengr.model.Curriculum">
+		update tab_curriculum_scu set
+			course_college=#courseCollege#,
+			course_code=#courseCode#,
+			course_name=#courseName#,
+			teacher_name=#teacherName#,
+			textbook_name=#bookName#,
+			textbook_publisher=#bookPublisher#,
+			textbook_edition=#bookEdition#,
+			course_university=#courseUniversity#,
+			textbook_id=#textbookId#,
+			course_info=#courseInfo#,
+			teacher_id=#teacherId#,
+			college_id=#collegeId#
+		where
+		    id=#id#
+	</update>
+	
+	<!-- 通过id来查找书单 -->
+	<select id="getCurriculumById" resultMap="curriculumResult">
+		select * 
+		from tab_curriculum_scu
+		where id=#id#
+	</select>
+	
+	<delete id="deleteCurriculumById">
+		delete from tab_curriculum_scu
+		where id=#id#;
+	</delete>
+	
+	<select id="getAllCurriculums" resultMap="curriculumResult">
+		select *
+		from tab_curriculum_scu
+	</select>
+
+ </sqlMap>

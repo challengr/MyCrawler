@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings cacheModelsEnabled="true" enhancementEnabled="true"
+		lazyLoadingEnabled="true" maxRequests="128" maxSessions="10"
+		maxTransactions="5" useStatementNamespaces="false"
+		defaultStatementTimeout="5" statementCachingEnabled="true"
+		classInfoCacheEnabled="true" />
+		
+	<transactionManager type="JDBC">
+		<dataSource type="SIMPLE">
+			<property name="JDBC.Driver" value="com.mysql.jdbc.Driver" />
+
+			<property name="JDBC.ConnectionURL" value="jdbc:mysql://192.168.199.254:3306/db_cindy" />
+			
+        <!-- 
+ 			<property name="JDBC.ConnectionURL" value="jdbc:mysql://192.168.199.254:3306/db_curriculum"/>
+ 			 -->
+			<property name="JDBC.Username" value="wangzhe" />
+			<property name="JDBC.Password" value="123123" />
+			<property name="JDBC.DefaultAutoCommit" value="true" />
+			
+			<property name="Pool.MaximumActiveConnections" value="10" />
+			<property name="Pool.MaximumIdleConnections" value="5" />
+			<property name="Pool.MaximumCheckoutTime" value="120000" />
+			<property name="Pool.TimeToWait" value="500" />
+			<property name="Pool.PingQuery" value="select 1 from ACCOUNT" />
+			<property name="Pool.PingEnabled" value="false" />
+			<property name="Pool.PingConnectionsOlderThan" value="1" />
+			<property name="Pool.PingConnectionsNotUsedFor" value="1" />
+		
+		</dataSource>
+	</transactionManager>
+	
+	<!-- Including sqlMaps -->
+	<sqlMap resource="com/challengr/dao/ibatis/GoodsCategory.xml" />
+	<sqlMap resource="com/challengr/dao/ibatis/Book.xml" />
+	<sqlMap resource="com/challengr/dao/ibatis/Goods.xml" />
+	<sqlMap resource="com/challengr/dao/ibatis/Curriculum.xml"/>
+	<sqlMap resource="com/challengr/dao/ibatis/Teacher.xml"/>
+	<sqlMap resource="com/challengr/dao/ibatis/Major.xml"/>
+	
+</sqlMapConfig>

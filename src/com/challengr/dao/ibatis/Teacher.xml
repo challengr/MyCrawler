@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ <sqlMap namespace="Teacher">
+ 	<typeAlias alias="Teacher" type="com.challengr.model.Teacher"/>
+ 	<resultMap id="TeacherResult" class="Teacher">
+       	<result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="contactInfo" column="contactInfo"/>
+    </resultMap>
+
+	<insert id="insertTeacher" parameterClass="com.challengr.model.Teacher">
+		INSERT INTO tab_teacher (id,name,contactInfo)
+				 		   VALUES (#id#,#name#,#contactInfo#)
+		<selectKey resultClass="int" keyProperty="id">    
+			SELECT @@IDENTITY AS ID    
+		</selectKey>		 		   
+	</insert>
+	
+	<delete id="deleteTeacherById">
+		delete from tab_teacher
+		where id=#id#;
+	</delete>
+	
+	<update id="updateTeacher" parameterClass="com.challengr.model.Teacher"> 
+		update tab_teacher set 
+			name=#name#,
+			contactInfo=#contactInfo#
+		where id=#id# 
+	</update>
+	
+	<select id="getAllTeachers" resultMap="TeacherResult">
+		select * 
+		from tab_teacher
+	</select>
+	
+	<select id="getTeacherByName" parameterClass="java.lang.String" resultMap="TeacherResult">
+		select *
+		from tab_teacher
+		where name=#name#
+	</select>
+	
+ </sqlMap>

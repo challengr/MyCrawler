@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ <sqlMap namespace="Book">
+ 	<typeAlias alias="Book" type="com.challengr.model.Book"/>
+ 	<resultMap id="bookResult" class="Book">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="uriString" column="uriString"/>
+        <result property="title" column="title"/>
+        <result property="author" column="author"/>
+        <result property="listPrice" column="listPrice"/>
+        <result property="actualPrice" column="actualPrice"/>
+        <result property="publisher" column="publisher"/>
+        <result property="bookSetName" column="bookSetName"/>
+        <result property="type" column="type"/>
+        <result property="language" column="language"/>
+        <result property="size" column="size"/>
+        <result property="ISBN" column="ISBN"/>
+        <result property="barCode" column="barCode"/>
+        <result property="dimensions" column="dimensions"/>
+        <result property="weight" column="weight"/>
+        <result property="brand" column="brand"/>
+        <result property="ASIN" column="ASIN"/>
+        <result property="pages" column="pages"/>
+        <result property="imgUrl1" column="imgUrl1"/>
+        <result property="imgUrl2" column="imgUrl2"/>
+    </resultMap>
+
+ 	<resultMap id="bookWithCategoryInfoResult" extends="bookResult" class="Book" groupBy="id">
+        <result property="categoryInfoOfGoodsList" resultMap="Book.categoryInfoResult"/>
+    </resultMap>
+
+    <resultMap id="categoryInfoResult" class="com.challengr.model.CategoryInfoOfGoods">
+        <result property="categoryId" column="categoryId"/>
+        <result property="rankingInCategory" column="rankingInCategory"/>
+    </resultMap>
+    
+    <select id="getAllBook" resultMap="bookResult">
+    	select * from tab_book
+    </select>
+    
+    <select id="getBookList" resultMap="bookResult"  parameterClass="java.util.Map">
+    	<![CDATA[ SELECT
+					*
+			      FROM
+					tab_book
+				  WHERE
+					id >= #fromId# and id<=#toId# ]]>
+    </select>
+    
+    <select id="getAllBookWithCategoryInfo" resultMap="bookWithCategoryInfoResult">
+		SELECT
+			tab_book.*,tab_goods_category_rel.categoryId,tab_goods_category_rel.rankingInCategory
+		FROM
+			tab_book
+		Left outer join 
+			tab_goods_category_rel
+		on
+			tab_book.id = tab_goods_category_rel.goodsId
+    </select>
+    
+    <select id="getAllBookByRanking" resultMap="bookResult" parameterClass="int">
+		SELECT
+			tab_book.*
+		FROM
+			tab_book,
+			tab_goods_category_rel
+		WHERE
+			tab_book.id = tab_goods_category_rel.goodsId
+		AND tab_goods_category_rel.categoryId = #value#
+		ORDER BY
+			tab_goods_category_rel.rankingInCategory ASC
+    </select>
+    
+    <select id="getCategoryInfoByGoodsId" resultMap="categoryInfoResult" parameterClass="int">
+		SELECT
+			*
+		FROM
+			tab_goods_category_rel
+		WHERE
+			tab_goods_category_rel.goodsId = #value#
+    </select>
+    
+    <select id="getBookByUriString" parameterClass="Book" resultMap="bookResult">
+    	select * from tab_book where uriStringCRC32=CRC32(#uriString#) and uriString=#uriString#
+    </select>
+    
+    <select id="getBookByISBNAndTitle" parameterClass="Book" resultMap="bookResult">
+    	select * from tab_book where id!=#id# and ISBN=#ISBN# and title=#title#
+    </select>
+    
+    <select id="getBookListBySearchString" parameterClass="java.lang.String" resultMap="bookResult">
+		SELECT
+			*
+		FROM
+			tab_book
+		WHERE
+			title LIKE '%$value$%'
+			or author LIKE '%$value$%'
+			or publisher LIKE '%$value$%'
+			or isbn LIKE '%$value$%'
+    </select>
+    
+    <select id="getBookByTitle" parameterClass="java.lang.String" resultMap="bookResult">
+    	SELECT * FROM tab_book where titleCRC32=CRC32(#title#) AND title=#title#
+    </select>
+    
+    <select id="getBookListByTitle" parameterClass="java.lang.String" resultMap="bookResult">
+    	select *
+    	from tab_book
+    	where title like '%#title#%'
+    </select> 
+    
+     <!-- 添加Book -->
+	<insert id="insertBook" parameterClass="Book" >
+		INSERT INTO tab_book (id,name,uriString,title,author,listPrice,actualPrice,
+		publisher,bookSetName,type,language,size,ISBN,barCode,dimensions,weight,brand,ASIN,pages,uriStringCRC32,titleCRC32,imgUrl1,imgUrl2) 
+							VALUES
+							(#id#,#name#,#uriString#,#title#,#author#,#listPrice#,#actualPrice#,
+		#publisher#,#bookSetName#,#type#,#language#,#size#,#ISBN#,#barCode#,#dimensions#,#weight#,#brand#,#ASIN#,#pages#,
+		CRC32(#uriString#),CRC32(#title#),#imgUrl1#,#imgUrl2#)
+		<selectKey resultClass="int" keyProperty="id">    
+			SELECT @@IDENTITY AS ID    
+		</selectKey>	
+	</insert>
+
+	<!-- 更新Book -->
+	<update id="updateBook" parameterClass="Book" >
+		update tab_book set 
+			name=#name#,uriString=#uriString#,
+			title=#title#,author=#author#,listPrice=#listPrice#,actualPrice=#actualPrice#,
+			publisher=#publisher#,bookSetName=#bookSetName#,type=#type#,
+			language=#language#,size=#size#,ISBN=#ISBN#,barCode=#barCode#,
+			dimensions=#dimensions#,weight=#weight#,brand=#brand#,ASIN=#ASIN#,pages=#pages#,
+			uriStringCRC32=CRC32(#uriString#),imgUrl1=#imgUrl1#,imgUrl2=#imgUrl2#
+		where id=#id# 
+	</update>
+	
+	<!-- 添加重复Book至tab_book_shadow -->
+	<insert id="insertBookShadowRelation" parameterClass="java.util.Map" >
+		INSERT INTO tab_book_shadow_rel (bookId,shadowBookId) 
+							VALUES
+							(#bookId#,#shadowBookId#)
+		<selectKey resultClass="int" keyProperty="id">    
+			SELECT @@IDENTITY AS ID    
+		</selectKey>	
+	</insert>
+	
+	<!-- 更新Book记录为存在shadow标示 -->
+	<update id="updateBookShadowFlag" parameterClass="Book" >
+		update tab_book set
+		ISBN='FLAG_SHADOW' 
+		where id=#id# 
+	</update>
+	
+	
+	<!-- 添加goods和category的关系，包括ranking排名 -->
+	<insert id="insertGoodsCaegoryRelation" parameterClass="java.util.Map" >
+		INSERT INTO tab_goods_category_rel (goodsId,categoryId,rankingInAll) 
+							VALUES
+							(#goodsId#,#categoryId#,#rankingInAll#)
+		<selectKey resultClass="int" keyProperty="id">    
+			SELECT @@IDENTITY AS ID    
+		</selectKey>	
+	</insert>
+	
+	<!-- 更新goods和category关系表，包括ranking排名 -->
+	<update id="updateGoodsCaegoryRelation" parameterClass="java.util.Map" >
+		update tab_goods_catetory_rel set
+		rankingInCategory=#rankingInCategory#
+		where id=#id#
+	</update>
+	<!-- 查找该作者出版的所有书籍 -->
+	<select id="getBookListByAuthor" parameterClass="java.lang.String" resultMap="bookResult">
+		select *
+		from tab_book
+		where author like '$author$'
+	</select>
+	
+ </sqlMap>

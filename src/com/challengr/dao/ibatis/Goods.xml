@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ <sqlMap namespace="Goods">
+ 	<typeAlias alias="Goods" type="com.myteam.model.Goods"/>
+ 	<typeAlias alias="GoodsAddon" type="com.challengr.model.GoodsAddon"/>
+ 	<resultMap id="goodsAddonResult" class="GoodsAddon">
+        <result property="id" column="id"/>
+        <result property="goodsId" column="goodsId"/>
+        <result property="fromSite" column="fromSite"/>        
+        <result property="uriString" column="uriString"/>
+        <result property="title" column="title"/>
+        <result property="imgUriString1" column="imgUriString1"/>
+        <result property="imgUriString2" column="imgUriString2"/>
+        <result property="imgUriString3" column="imgUriString3"/>
+    </resultMap>
+
+    <select id="getGoodsAddon" resultMap="goodsAddonResult" parameterClass="java.util.Map">
+    	<![CDATA[ select * from tab_goods_addon where goodsId>=#fromId# and goodsId<=#toId#  ]]>
+    </select>
+   
+    <!-- 添加Goods_Addon -->
+	<insert id="insertGoodsAddon" parameterClass="GoodsAddon" >
+		INSERT INTO tab_goods_addon (
+			id,
+			goodsId,
+			fromSite,
+			uriString,
+			title,
+			imgUriString1,
+			imgUriString2,
+			imgUriString3
+		)
+		VALUES
+			(#id#,#goodsId#,#fromSite#,#uriString#,#title#,#imgUriString1#,#imgUriString2#,#imgUriString3#)
+		ON DUPLICATE KEY UPDATE
+			fromSite=#fromSite#,
+			uriString=#uriString#,title=#title#,imgUriString1=#imgUriString1#,
+			imgUriString2=#imgUriString2#,imgUriString3=#imgUriString3#						
+		<selectKey resultClass="int" keyProperty="id">    
+			SELECT @@IDENTITY AS ID    
+		</selectKey>	
+	</insert>
+
+	<!-- 更新Goods_Addon -->
+	<update id="updateGoodsAddon" parameterClass="GoodsAddon" >
+		update tab_goods_addon set
+			fromSite=#fromSite#,
+			uriString=#uriString#,title=#title#,imgUriString1=#imgUriString1#,
+			imgUriString2=#imgUriString2#,imgUriString3=#imgUriString3#
+		where id=#id# 
+	</update>
+	
+	<select id="getShadowGoodsAddon" resultMap="goodsAddonResult">
+    	SELECT
+			tab_goods_addon.*
+		FROM
+			tab_goods_addon,
+			tab_book
+		WHERE
+			isbn = "FLAG_SHADOW"
+		AND tab_goods_addon.goodsId = tab_book.id
+    </select>
+    
+   	<delete id="deleteShadowGoodsAddon">
+		delete
+			tab_goods_addon.*
+		FROM
+			tab_goods_addon,
+			tab_book
+		WHERE
+			isbn = "FLAG_SHADOW"
+		AND tab_goods_addon.goodsId = tab_book.id
+    </delete>
+ </sqlMap>

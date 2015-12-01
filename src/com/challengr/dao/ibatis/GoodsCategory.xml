@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+ <sqlMap namespace="GoodsCategory">
+ 	<typeAlias alias="GoodsCategory" type="com.challengr.model.GoodsCategory"/>
+ 	<resultMap id="goodsCategoryResult" class="GoodsCategory">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parentId"/>
+        <result property="name" column="name"/>
+        <result property="uriString" column="uriString"/>
+        <result property="goodsCount" column="goodsCount" javaType="int" nullValue="0"/>
+    </resultMap>
+
+    <select id="getAllGoodsCategory" resultMap="goodsCategoryResult">
+    	select * from tab_goods_category
+    </select>
+    
+    <select id="getGoodsCategoryByName" resultMap="goodsCategoryResult" parameterClass="java.lang.String">
+    	select * from tab_goods_category where name=#value# 
+    </select>
+    
+    <select id="getGoodsCategoryByNameAndParentId" resultMap="goodsCategoryResult" parameterClass="GoodsCategory">
+    	select * from tab_goods_category where name=#name# and parentId=#parentId#
+    </select>
+    
+     <!-- 添加GoodsCategory -->
+	<insert id="insertGoodsCategory" parameterClass="GoodsCategory" >
+		INSERT INTO tab_goods_category (parentId,name,uriString,goodsCount) 
+										VALUES
+										(#parentId#,#name#,#uriString#,#goodsCount#)
+		<selectKey resultClass="int" keyProperty="id">    
+			SELECT @@IDENTITY AS ID    
+		</selectKey>
+	</insert>
+
+ </sqlMap>
