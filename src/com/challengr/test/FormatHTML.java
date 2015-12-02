@@ -1,20 +1,19 @@
 package com.challengr.test;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.challengr.dao.ibatis.BookSqlMapDAO;
 import com.challengr.model.Book;
 import com.challengr.parser.PageContentParser;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 public class FormatHTML {
 	static int count = 0;
 	
 	public static void formatTitle() {
 		
-		List<Book> bookList = new ArrayList<Book>();
+		List<Book> bookList;
 		String title;
 		try {
 			BookSqlMapDAO bookDAO = new BookSqlMapDAO();

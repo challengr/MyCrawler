@@ -1,16 +1,16 @@
 package com.challengr.service;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 import com.challengr.dao.ICurriculumDAO;
 import com.challengr.dao.IMajorDAO;
 import com.challengr.dao.ibatis.CurriculumSqlMapDAO;
 import com.challengr.dao.ibatis.MajorSqlMapDAO;
 import com.challengr.model.Curriculum;
 import com.challengr.model.Major;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MajorService implements IMajorService {
 

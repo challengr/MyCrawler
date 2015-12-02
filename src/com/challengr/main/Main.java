@@ -1,5 +1,6 @@
 package com.challengr.main;
 
+
 import com.challengr.controller.MatchingBookController;
 import com.challengr.model.CategoryInfoOfGoods;
 import com.challengr.pub.SystemConfig;
@@ -8,12 +9,13 @@ import com.challengr.service.BookService;
 public class Main {
 	
 	public static void main(String[] args) {
-		
+
 		CategoryInfoOfGoods category = new CategoryInfoOfGoods();
 		category.setCategoryId(SystemConfig.CATEGORY_ID_TEXTBOOK);
 		category.setCategoryName(SystemConfig.CATEGORY_NAME_TEXTBOOK);
 		BookService bookService;
 		bookService = new BookService();
+
 		// 更新图书详情
 		// 设置图书的分类
 		// 健美健身(1-13063)
@@ -43,7 +45,7 @@ public class Main {
 		// 完成书单的书和book表中书的对应
 		MatchingBookController matching = new MatchingBookController();
 		matching.control();
-	
+
 	} 
 	
 	

@@ -1,21 +1,5 @@
 package com.challengr.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Random;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -26,7 +10,10 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 
-import net.sf.json.JSONObject;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Random;
 
 /**
  * 封装http请求
@@ -36,95 +23,10 @@ import net.sf.json.JSONObject;
  */
 public class IOUtil {
 	/**
-	 * 发起https请求并获取结果
-	 * 
-	 * @param requestUrl
-	 *            请求地址
-	 * @param requestMethod
-	 *            请求方式（GET、POST）
-	 * @param outputStr
-	 *            提交的数据
-	 * @param charset 加密方式
-	 * @return JSONObject(通过JSONObject.get(key)的方式获取json对象的属性值)
-	 */
-	public static JSONObject httpRequest(String requestUrl,
-			String requestMethod, String outputStr, String charset) {
-		JSONObject jsonObject = null;
-		StringBuffer buffer = new StringBuffer();
-		try {
-// 创建SSLContext对象，并使用我们指定的信任管理器初始化
-// TrustManager[] tm = { new MyX509TrustManager() };
-// SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
-// sslContext.init(null, tm, new java.security.SecureRandom());
-// 从上述SSLContext对象中得到SSLSocketFactory对象
-// SSLSocketFactory ssf = sslContext.getSocketFactory();
-
-			URL url = new URL(requestUrl);
-// HttpsURLConnection httpUrlConn = (HttpsURLConnection)
-// url.openConnection();
-			HttpURLConnection httpUrlConn = (HttpURLConnection) url
-					.openConnection();
-// httpUrlConn.setSSLSocketFactory(ssf);
-
-			httpUrlConn.setDoOutput(true);
-			httpUrlConn.setDoInput(true);
-			httpUrlConn.setUseCaches(false);
-			// 设置请求方式（GET/POST）
-			httpUrlConn.setRequestMethod(requestMethod);
-
-			if ("GET".equalsIgnoreCase(requestMethod))
-				httpUrlConn.connect();
-
-			// 当有数据需要提交时
-			if (null != outputStr) {
-				OutputStream outputStream = httpUrlConn.getOutputStream();
-				// 注意编码格式，防止中文乱码
-				outputStream.write(outputStr.getBytes(charset));
-				outputStream.close();
-			}
-
-			// 将返回的输入流转换成字符串
-			InputStream inputStream = httpUrlConn.getInputStream();
-			// 将inputStream decode为utf-8的形式
-			InputStreamReader inputStreamReader = new InputStreamReader(
-					inputStream, "GBK");
-			BufferedReader bufferedReader = new BufferedReader(
-					inputStreamReader);
-			String str;
-			while ((str = bufferedReader.readLine()) != null) {
-				buffer.append(str);
-			}
-			// 使返回的数据成json格式
-			String prefix = "hxbase_json1(";
-			String suffix = "}]})";
-			str = buffer.substring(prefix.length()).toString();
-			str = str.replace(suffix, "}]}");
-
-			// 释放资源
-			bufferedReader.close();
-			inputStreamReader.close();
-			inputStream.close();
-			inputStream = null;
-			httpUrlConn.disconnect();
-
-			// 解析成json格式
-			jsonObject = null;
-			jsonObject = JSONObject.fromObject(str);
-		} catch (ConnectException ce) {
-			System.out.println("Weixin server connection timed out.");
-		} catch (Exception e) {
-			System.out.println("https request error:{}");
-			// e.printStackTrace();
-		}
-		return jsonObject;
-	}
-
-	/**
 	 * 发送Http请求，并把文件保存到本地
 	 * @param requestUrl 请求地址
 	 * @param fileURI 文件保存地址
-	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static void downloadFile(String requestUrl, String fileURI) throws IOException {
 		FileOutputStream fileOutputStream = null;

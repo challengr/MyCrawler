@@ -15,8 +15,8 @@ public class GoodsCategory {
 	private String uriString;
 	private int goodsCount;
 	
-	//以下两个成员变量不从数据库中直接读取，�?�是在dao层�?�过递归计算来构�?
-	//减少数据库计�?
+	//以下两个成员变量不从数据库中直接读取，�?�是在dao层�?�过递归计算来构�?
+	//减少数据库计�?
 	private GoodsCategory parent;
 	private ArrayList<GoodsCategory> children;	
 	

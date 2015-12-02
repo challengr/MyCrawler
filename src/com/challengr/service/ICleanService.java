@@ -12,6 +12,6 @@ public interface ICleanService {
 	/**
 	 * 用于处理并清理
 	 */
-	public void clean ();
+	void clean();
 	
 }
